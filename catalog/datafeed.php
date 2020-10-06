@@ -54,6 +54,10 @@ $Cur	= $HTTP_POST_VARS["Cur"];
 
 $remark	= $HTTP_POST_VARS["remark"];
 
+$payerAuth = $HTTP_POST_VARS["payerAuth"];
+
+$secureHash = $HTTP_POST_VARS["secureHash"];
+
 // Load selected payment module require(DIR_WS_CLASSES . 'payment.php');
 $payment_modules = new payment($payment);
 
@@ -138,9 +142,9 @@ $query = "SELECT currency FROM orders WHERE orders_id ='$Ref'";
 
 $result = tep_db_query($query);
 
-$item=mysql_fetch_assoc($result);
+$item=mysqli_fetch_assoc($result);
 
-$num_row=mysql_num_rows($result);
+$num_row=mysqli_num_rows($result);
 
 $checkCur = $item['currency'];
 
@@ -190,11 +194,27 @@ $value_query = "SELECT value FROM orders_total WHERE orders_id ='$Ref' and class
 
 $value_result = tep_db_query($value_query);
 
-$value_item=mysql_fetch_assoc($value_result);
+$value_item=mysqli_fetch_assoc($value_result);
 
 $checkAmt = $value_item['value'];
 
 
+$secureHashSecret = MODULE_PAYMENT_PAYDOLLAR_SHSKEY;
+if(trim($secureHashSecret) != ""){	
+			require_once ('SHAPaydollarSecure.php');
+			$secureHashs = explode ( ',', $secureHash );
+			$paydollarSecure = new SHAPaydollarSecure ();
+			// while ( list ( $key, $value ) = each ( $secureHashs ) ) {
+			foreach($secureHashs as $key => $value) {
+				$verifyResult = $paydollarSecure->verifyPaymentDatafeed($src, $prc, $successcode, $Ref, $PayRef, $Cur, $Amt, $payerAuth, $secureHashSecret, $value);
+				if ($verifyResult) {
+					break ;
+				}
+			}	
+			if (! $verifyResult) {
+				exit("Secure Hash Validation Failed");
+			}
+		}
 
 //If an order with Ref exists
 
@@ -408,6 +428,6 @@ else{
 	echo("tx fail");
 }
 
-tep_db_close();
+// tep_db_close();
 
 ?>
