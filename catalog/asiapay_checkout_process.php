@@ -361,6 +361,8 @@ else if (DEFAULT_CURRENCY=="SGD") // SGD
 $currCode = 702;
 else if (DEFAULT_CURRENCY=="JPY") // JPY
 $currCode = 392;
+else if (DEFAULT_CURRENCY=="PHP") // JPY
+$currCode = 608;
 //***You can add code for currencies other than USD and HKD
 //***Here are some code for other currencies :
 //****************************************
@@ -394,6 +396,20 @@ $currCode = 392;
 
 
 $form_action_url = $_POST["actionUrl"];
+  $merchantId = $_POST['merchantId'];  
+  $orderRef = $insert_id;
+  $currCode = $_POST['currCode'];
+  $amount = $_POST['amount'];
+  $payType = $_POST['payType']; 
+  $secureHashSecret = $_POST['secureHashSecret'];
+  if ($secureHashSecret) {
+    require_once ('SHAPaydollarSecure.php');
+    $paydollarSecure = new SHAPaydollarSecure ();
+    $secureHash = $paydollarSecure->generatePaymentSecureHash ( $merchantId, $orderRef, $currCode, $amount, $payType, $secureHashSecret );
+    // $data ['secureHash'] = $secureHash;
+  } else {
+    // $data ['secureHash'] = '';
+  }
 echo tep_draw_form('payFormCcard', $form_action_url, 'post');
 ?>
       <input type="hidden" name="merchantId" value="<?php echo $_POST['merchantId']; ?>">   
@@ -407,6 +423,7 @@ echo tep_draw_form('payFormCcard', $form_action_url, 'post');
       <input type="hidden" name="lang" value="<?php echo $_POST["lang"]; ?>">
       <!-- <input type="hidden" name="payMethod" value="CC"> -->
       <input type="hidden" name="name" value="<?php echo $order->info['cc_owner']?>">
+      <input type="hidden" name="secureHash" value="<?php echo $secureHash;?>">
 	  </form>
 </body>
 </html>
