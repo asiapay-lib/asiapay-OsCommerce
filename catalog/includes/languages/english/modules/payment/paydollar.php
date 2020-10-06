@@ -22,4 +22,6 @@
   define('MODULE_PAYMENT_PAYDOLLAR_DIRECT_CARD_ISSUE_NUMBER', 'Card Issue Number:');
   define('MODULE_PAYMENT_PAYDOLLAR_DIRECT_CARD_ISSUE_NUMBER_INFO', '(for Maestro and Solo cards only)');
   define('MODULE_PAYMENT_PAYPAL_DIRECT_ERROR_ALL_FIELDS_REQUIRED', 'Error: All payment information fields are required.');
+  define('MODULE_PAYMENT_PAYDOLLAR_SORT_ORDER', 0);
+  define('MODULE_PAYMENT_PAYDOLLAR_STATUS', true);
 ?>
